@@ -6,7 +6,7 @@ const HIGHLIGHTS = [
   { value: "Zero Trust", label: "DevSecOps" },
 ];
 
-export default function AccessBadgeHero() {
+export default function AccessBadgeHero({ imageUrl }: { imageUrl?: string }) {
   return (
     <section className="relative min-h-screen flex items-center pt-16 overflow-hidden">
       <div className="hero-grid absolute inset-0 pointer-events-none" aria-hidden="true" />
@@ -19,14 +19,14 @@ export default function AccessBadgeHero() {
             <div className="relative">
               <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-accent/40 to-accent/5 blur-sm" />
               <div className="relative w-48 h-48 sm:w-56 sm:h-56 rounded-2xl overflow-hidden border border-hairline bg-surface">
-                <Image
-                  src="/image/imagemine.jpg"
-                  alt="Oluwaferanmi David Adeoye"
-                  fill
-                  sizes="(max-width: 1024px) 224px, 256px"
-                  className="object-cover"
-                  priority
-                />
+              {/* change the Image src: */}
+              <Image
+                src={imageUrl || "/image/imagemine.png"}
+                alt="Oluwaferanmi David Adeoye"
+                fill
+                sizes="128px"
+                className="object-cover"
+              />
               </div>
             </div>
           </div>
@@ -71,3 +71,4 @@ export default function AccessBadgeHero() {
     </section>
   );
 }
+

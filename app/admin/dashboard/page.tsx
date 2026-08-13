@@ -6,7 +6,7 @@ import AdminForm from "@/components/AdminForm";
 import { FIELD_CONFIG, EMPTY_VALUES, toPayload, toFormValues } from "@/lib/adminFields";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-const TABS = ["projects", "certifications", "skills", "messages"] as const;
+const TABS = ["projects", "certifications", "skills", "messages", "settings"] as const;
 type Tab = (typeof TABS)[number];
 
 export default function AdminDashboard() {
@@ -19,6 +19,7 @@ export default function AdminDashboard() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formValues, setFormValues] = useState<Record<string, any>>({});
   const [formError, setFormError] = useState("");
+  const [settingsSaved, setSettingsSaved] = useState(false);
 
   useEffect(() => {
     const t = localStorage.getItem("admin_token");
@@ -55,8 +56,14 @@ export default function AdminDashboard() {
 
   async function load() {
     setLoading(true);
-    const res = await authedFetch(`/${tab}`);
-    setItems(await res.json());
+    if (tab === "settings") {
+      const res = await authedFetch("/settings");
+      setFormValues(toFormValues("settings", await res.json()));
+      setFormOpen(true);
+    } else {
+      const res = await authedFetch(`/${tab}`);
+      setItems(await res.json());
+    }
     setLoading(false);
   }
 
@@ -95,6 +102,14 @@ export default function AdminDashboard() {
     setFormError("");
     const payload = toPayload(tab, formValues);
     try {
+      if (tab === "settings") {
+        const res = await authedFetch("/settings", { method: "PUT", body: JSON.stringify(payload) });
+        if (!res.ok) throw new Error((await res.json()).error || "Save failed");
+        setFormValues(toFormValues("settings", await res.json()));
+        setSettingsSaved(true);
+        setTimeout(() => setSettingsSaved(false), 2000);
+        return;
+      }
       const res = await authedFetch(editingId ? `/${tab}/${editingId}` : `/${tab}`, {
         method: editingId ? "PUT" : "POST",
         body: JSON.stringify(payload),
@@ -115,13 +130,14 @@ export default function AdminDashboard() {
     router.push("/admin/login");
   }
 
-  const isCrudTab = tab !== "messages";
+  const isCrudTab = tab !== "messages" && tab !== "settings";
+  const isListTab = tab !== "settings";
 
   return (
     <main className="min-h-screen px-6 py-12 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-display text-2xl font-bold text-text">Portfolio control center</h1>
-        <button onClick={logout} className="font-mono text-xs text-textDim hover:text-accent transition">
+        <button onClick={logout} className="font-mono text-xs text-vault hover:underline">
           Sign out
         </button>
       </div>
@@ -133,7 +149,7 @@ export default function AdminDashboard() {
             onClick={() => setTab(t)}
             className={`font-mono text-xs px-3 py-1.5 rounded border ${
               tab === t
-                ? "bg-accent text-ink border-accent"
+                ? "bg-verified text-ink border-verified"
                 : "border-hairline text-textDim"
             }`}
           >
@@ -145,29 +161,38 @@ export default function AdminDashboard() {
       {isCrudTab && !formOpen && (
         <button
           onClick={openCreateForm}
-          className="focus-ring mb-6 font-mono text-xs px-4 py-2 rounded-md border border-accent text-accent hover:bg-accent hover:text-ink transition"
+          className="focus-ring mb-6 font-mono text-xs px-4 py-2 rounded-md border border-verified text-verified hover:bg-verified hover:text-ink transition"
         >
           + Add {tab.slice(0, -1)}
         </button>
       )}
 
-      {isCrudTab && formOpen && (
+      {tab === "settings" && (
+        <p className="text-textDim text-xs font-mono mb-4">
+          Controls the hero photo and intro video on the homepage.
+        </p>
+      )}
+
+      {(isCrudTab || tab === "settings") && formOpen && (
         <>
-          {formError && <p className="text-red-400 text-sm font-mono mb-3">{formError}</p>}
+          {formError && <p className="text-vault text-sm font-mono mb-3">{formError}</p>}
+          {settingsSaved && (
+            <p className="text-verified text-sm font-mono mb-3">Saved.</p>
+          )}
           <AdminForm
             fields={FIELD_CONFIG[tab]}
             values={formValues}
             onChange={(name, value) => setFormValues((v) => ({ ...v, [name]: value }))}
             onSubmit={handleFormSubmit}
-            onCancel={closeForm}
-            submitLabel={editingId ? "Save changes" : "Create"}
+            onCancel={tab === "settings" ? undefined : closeForm}
+            submitLabel={tab === "settings" ? "Save settings" : editingId ? "Save changes" : "Create"}
           />
         </>
       )}
 
       {loading ? (
         <p className="text-textDim text-sm">Loading…</p>
-      ) : (
+      ) : isListTab ? (
         <div className="flex flex-col gap-3">
           {items.length === 0 && <p className="text-textDim text-sm">Nothing here yet.</p>}
           {items.map((item) => (
@@ -178,7 +203,7 @@ export default function AdminDashboard() {
               <div className="text-sm text-text">
                 {tab === "messages" ? (
                   <>
-                    <p className="font-mono text-xs text-accent mb-1">
+                    <p className="font-mono text-xs text-vault mb-1">
                       {item.name} · {item.email} {item.read ? "" : "· unread"}
                     </p>
                     <p className="font-medium mb-1">{item.subject || "(no subject)"}</p>
@@ -195,7 +220,7 @@ export default function AdminDashboard() {
                 {tab === "messages" && !item.read && (
                   <button
                     onClick={() => markRead(item._id)}
-                    className="font-mono text-xs text-accent hover:underline"
+                    className="font-mono text-xs text-verified hover:underline"
                   >
                     mark read
                   </button>
@@ -203,14 +228,14 @@ export default function AdminDashboard() {
                 {isCrudTab && (
                   <button
                     onClick={() => openEditForm(item)}
-                    className="font-mono text-xs text-accent hover:underline"
+                    className="font-mono text-xs text-verified hover:underline"
                   >
                     edit
                   </button>
                 )}
                 <button
                   onClick={() => handleDelete(item._id)}
-                  className="font-mono text-xs text-red-400 hover:underline"
+                  className="font-mono text-xs text-vault hover:underline"
                 >
                   delete
                 </button>
@@ -218,7 +243,7 @@ export default function AdminDashboard() {
             </div>
           ))}
         </div>
-      )}
+      ) : null}
     </main>
   );
 }
