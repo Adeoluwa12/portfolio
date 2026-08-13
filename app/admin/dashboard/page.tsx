@@ -147,10 +147,10 @@ export default function AdminDashboard() {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`font-mono text-xs px-3 py-1.5 rounded border ${
+            className={`font-mono text-xs px-3 py-1.5 rounded border transition-colors ${
               tab === t
                 ? "bg-verified text-ink border-verified"
-                : "border-hairline text-textDim"
+                : "border-hairline text-textDim hover:border-verified hover:text-verified hover:bg-verified/10"
             }`}
           >
             {t}

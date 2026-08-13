@@ -14,6 +14,8 @@ module.exports = {
         accent: "var(--accent)",
         accentDim: "var(--accent-dim)",
         success: "var(--success)",
+        verified: "var(--success)",
+        vault: "#f87171",
       },
       fontFamily: {
         display: ["var(--font-display)"],
