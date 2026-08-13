@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 
 const LINKS = [
-  { href: "#about", label: "About" },
-  { href: "#skills", label: "Skills" },
-  { href: "#certifications", label: "Certifications" },
-  { href: "#projects", label: "Projects" },
-  { href: "#contact", label: "Contact" },
+  { href: "/#about", label: "About" },
+  { href: "/#skills", label: "Skills" },
+  { href: "/#certifications", label: "Certifications" },
+  { href: "/#projects", label: "Projects" },
+  { href: "/#contact", label: "Contact" },
 ];
 
 export default function Navbar() {
@@ -31,7 +31,7 @@ export default function Navbar() {
       }`}
     >
       <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <a href="#" className="font-display font-semibold text-text text-sm tracking-tight">
+        <a href="/" className="font-display font-semibold text-text text-sm tracking-tight">
           ODA<span className="text-accent">.</span>
         </a>
 

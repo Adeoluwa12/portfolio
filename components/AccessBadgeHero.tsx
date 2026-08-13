@@ -7,8 +7,11 @@ const HIGHLIGHTS = [
 ];
 
 export default function AccessBadgeHero({ imageUrl }: { imageUrl?: string }) {
+  const src = imageUrl || "/image/imagemine.png";
+  const isRemote = src.startsWith("http");
+
   return (
-    <section className="relative min-h-screen flex items-center pt-16 overflow-hidden">
+    <section id="about" className="relative min-h-screen flex items-center pt-16 overflow-hidden">
       <div className="hero-grid absolute inset-0 pointer-events-none" aria-hidden="true" />
       <div className="absolute top-1/4 -left-32 w-96 h-96 bg-accent/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-accent/5 rounded-full blur-3xl pointer-events-none" />
@@ -19,14 +22,23 @@ export default function AccessBadgeHero({ imageUrl }: { imageUrl?: string }) {
             <div className="relative">
               <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-accent/40 to-accent/5 blur-sm" />
               <div className="relative w-48 h-48 sm:w-56 sm:h-56 rounded-2xl overflow-hidden border border-hairline bg-surface">
-              {/* change the Image src: */}
-              <Image
-                src={imageUrl || "/image/imagemine.png"}
-                alt="Oluwaferanmi David Adeoye"
-                fill
-                sizes="128px"
-                className="object-cover"
-              />
+                {isRemote ? (
+                  <img
+                    key={src}
+                    src={src}
+                    alt="Oluwaferanmi David Adeoye"
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <Image
+                    key={src}
+                    src={src}
+                    alt="Oluwaferanmi David Adeoye"
+                    fill
+                    sizes="(max-width: 640px) 192px, 224px"
+                    className="object-cover"
+                  />
+                )}
               </div>
             </div>
           </div>
