@@ -3,7 +3,6 @@
 import { useState } from "react";
 
 const INITIAL_COUNT = 3;
-const LOAD_MORE_COUNT = 3;
 
 const FALLBACK_PROJECTS = [
   {
@@ -107,10 +106,10 @@ export default function AccessLogProjects({ projects }: { projects?: any[] }) {
           <div className="mt-8 flex justify-center">
             <button
               type="button"
-              onClick={() => setVisibleCount((count) => count + LOAD_MORE_COUNT)}
+              onClick={() => setVisibleCount(data.length)}
               className="focus-ring font-mono text-xs px-5 py-2.5 rounded-md border border-hairline text-textDim hover:border-accent hover:text-accent transition-colors"
             >
-              See more
+              View all projects ({data.length})
             </button>
           </div>
         )}
