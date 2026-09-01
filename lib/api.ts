@@ -9,7 +9,6 @@ async function get(path: string) {
 export const getProjects = () => get("/projects");
 export const getCertifications = () => get("/certifications");
 export const getSkills = () => get("/skills");
-export const getSettings = () => get("/settings");
 
 export async function submitContact(payload: {
   name: string;

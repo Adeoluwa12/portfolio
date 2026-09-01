@@ -1,7 +1,7 @@
 export type FieldConfig = {
   name: string;
   label: string;
-  type: "text" | "textarea" | "number" | "date" | "checkbox" | "select" | "tags" | "image" | "video";
+  type: "text" | "textarea" | "number" | "date" | "checkbox" | "select" | "tags" | "image";
   options?: string[]; // for select
 };
 
@@ -37,10 +37,6 @@ export const FIELD_CONFIG: Record<string, FieldConfig[]> = {
     { name: "proficiency", label: "Proficiency (1-5)", type: "number" },
     { name: "order", label: "Display order", type: "number" },
   ],
-  settings: [
-    { name: "heroImageUrl", label: "Hero photo", type: "image" },
-    { name: "heroVideoUrl", label: "Intro video", type: "video" },
-  ],
 };
 
 export const EMPTY_VALUES: Record<string, any> = {
@@ -65,7 +61,6 @@ export const EMPTY_VALUES: Record<string, any> = {
     order: 0,
   },
   skills: { name: "", category: "cloud", proficiency: 4, order: 0 },
-  settings: { heroImageUrl: "", heroVideoUrl: "" },
 };
 
 // Convert form state to the shape the API expects (e.g. split comma tags into an array).

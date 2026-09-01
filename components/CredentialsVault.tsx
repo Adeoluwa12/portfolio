@@ -2,7 +2,7 @@ const FALLBACK_CERTS = [
   { code: "AZ-104", name: "Azure Administrator Associate" },
   { code: "SC-200", name: "Security Operations Analyst Associate" },
   { code: "SC-300", name: "Identity and Access Administrator Associate" },
-  { code: "SC-400", name: "Information Protection Administrator Associate" },
+  { code: "SC-401", name: "Information Security Administrator Associate" },
   { code: "SC-500", name: "Microsoft Cloud and AI Security Engineer Associate" },
   { code: "SC-900", name: "Security, Compliance, and Identity Fundamentals" },
   { code: "AZ-900", name: "Azure Fundamentals" },

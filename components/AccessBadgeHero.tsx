@@ -1,15 +1,14 @@
 import Image from "next/image";
 
+const HERO_PHOTO = "/mepics.jpeg";
+
 const HIGHLIGHTS = [
   { value: "7×", label: "Microsoft Certified" },
   { value: "Azure", label: "Cloud Security" },
   { value: "Zero Trust", label: "DevSecOps" },
 ];
 
-export default function AccessBadgeHero({ imageUrl }: { imageUrl?: string }) {
-  const src = imageUrl || "/image/imagemine.png";
-  const isRemote = src.startsWith("http");
-
+export default function AccessBadgeHero() {
   return (
     <section id="about" className="relative min-h-screen flex items-center pt-16 overflow-hidden">
       <div className="hero-grid absolute inset-0 pointer-events-none" aria-hidden="true" />
@@ -21,24 +20,21 @@ export default function AccessBadgeHero({ imageUrl }: { imageUrl?: string }) {
           <div className="flex justify-center lg:justify-start">
             <div className="relative">
               <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-accent/40 to-accent/5 blur-sm" />
-              <div className="relative w-48 h-48 sm:w-56 sm:h-56 rounded-2xl overflow-hidden border border-hairline bg-surface">
-                {isRemote ? (
-                  <img
-                    key={src}
-                    src={src}
-                    alt="Oluwaferanmi David Adeoye"
-                    className="object-cover w-full h-full"
-                  />
-                ) : (
+              <div className="relative rounded-2xl p-3 bg-surfaceAlt border border-hairline shadow-[0_0_0_1px_rgba(56,189,248,0.15),0_12px_40px_rgba(0,0,0,0.35)]">
+                <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-accent/60 rounded-tl-sm pointer-events-none" />
+                <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-accent/60 rounded-tr-sm pointer-events-none" />
+                <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-accent/60 rounded-bl-sm pointer-events-none" />
+                <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-accent/60 rounded-br-sm pointer-events-none" />
+                <div className="relative w-48 h-48 sm:w-56 sm:h-56 rounded-xl overflow-hidden ring-1 ring-accent/25 ring-offset-2 ring-offset-surfaceAlt">
                   <Image
-                    key={src}
-                    src={src}
+                    src={HERO_PHOTO}
                     alt="Oluwaferanmi David Adeoye"
                     fill
+                    priority
                     sizes="(max-width: 640px) 192px, 224px"
                     className="object-cover"
                   />
-                )}
+                </div>
               </div>
             </div>
           </div>
@@ -83,4 +79,3 @@ export default function AccessBadgeHero({ imageUrl }: { imageUrl?: string }) {
     </section>
   );
 }
-

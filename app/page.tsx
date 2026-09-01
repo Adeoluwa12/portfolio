@@ -1,23 +1,20 @@
 import AccessBadgeHero from "@/components/AccessBadgeHero";
-import VideoIntro from "@/components/VideoIntro";
 import ScopesSkills from "@/components/ScopesSkills";
 import CredentialsVault from "@/components/CredentialsVault";
 import AccessLogProjects from "@/components/AccessLogProjects";
 import ContactForm from "@/components/ContactForm";
-import { getCertifications, getProjects, getSettings, getSkills } from "@/lib/api";
+import { getCertifications, getProjects, getSkills } from "@/lib/api";
 
 export default async function Home() {
-  const [skills, certifications, projects, settings] = await Promise.allSettled([
+  const [skills, certifications, projects] = await Promise.allSettled([
     getSkills(),
     getCertifications(),
     getProjects(),
-    getSettings(),
   ]).then((results) => results.map((r) => (r.status === "fulfilled" ? r.value : null)));
 
   return (
     <main>
-      <AccessBadgeHero imageUrl={settings?.heroImageUrl} />
-      <VideoIntro videoUrl={settings?.heroVideoUrl} />
+      <AccessBadgeHero />
       <ScopesSkills skills={skills} />
       <CredentialsVault certifications={certifications} />
       <AccessLogProjects projects={projects} />

@@ -6,7 +6,7 @@ import AdminForm from "@/components/AdminForm";
 import { FIELD_CONFIG, EMPTY_VALUES, toPayload, toFormValues } from "@/lib/adminFields";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-const TABS = ["projects", "certifications", "skills", "messages", "settings"] as const;
+const TABS = ["projects", "certifications", "skills", "messages"] as const;
 type Tab = (typeof TABS)[number];
 
 export default function AdminDashboard() {
@@ -19,7 +19,6 @@ export default function AdminDashboard() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formValues, setFormValues] = useState<Record<string, any>>({});
   const [formError, setFormError] = useState("");
-  const [settingsSaved, setSettingsSaved] = useState(false);
 
   useEffect(() => {
     const t = localStorage.getItem("admin_token");
@@ -56,14 +55,8 @@ export default function AdminDashboard() {
 
   async function load() {
     setLoading(true);
-    if (tab === "settings") {
-      const res = await authedFetch("/settings");
-      setFormValues(toFormValues("settings", await res.json()));
-      setFormOpen(true);
-    } else {
-      const res = await authedFetch(`/${tab}`);
-      setItems(await res.json());
-    }
+    const res = await authedFetch(`/${tab}`);
+    setItems(await res.json());
     setLoading(false);
   }
 
@@ -102,14 +95,6 @@ export default function AdminDashboard() {
     setFormError("");
     const payload = toPayload(tab, formValues);
     try {
-      if (tab === "settings") {
-        const res = await authedFetch("/settings", { method: "PUT", body: JSON.stringify(payload) });
-        if (!res.ok) throw new Error((await res.json()).error || "Save failed");
-        setFormValues(toFormValues("settings", await res.json()));
-        setSettingsSaved(true);
-        setTimeout(() => setSettingsSaved(false), 2000);
-        return;
-      }
       const res = await authedFetch(editingId ? `/${tab}/${editingId}` : `/${tab}`, {
         method: editingId ? "PUT" : "POST",
         body: JSON.stringify(payload),
@@ -130,8 +115,7 @@ export default function AdminDashboard() {
     router.push("/admin/login");
   }
 
-  const isCrudTab = tab !== "messages" && tab !== "settings";
-  const isListTab = tab !== "settings";
+  const isCrudTab = tab !== "messages";
 
   return (
     <main className="min-h-screen px-6 py-12 max-w-4xl mx-auto">
@@ -167,32 +151,23 @@ export default function AdminDashboard() {
         </button>
       )}
 
-      {tab === "settings" && (
-        <p className="text-textDim text-xs font-mono mb-4">
-          Controls the hero photo and intro video on the homepage.
-        </p>
-      )}
-
-      {(isCrudTab || tab === "settings") && formOpen && (
+      {(isCrudTab && formOpen) && (
         <>
           {formError && <p className="text-vault text-sm font-mono mb-3">{formError}</p>}
-          {settingsSaved && (
-            <p className="text-verified text-sm font-mono mb-3">Saved.</p>
-          )}
           <AdminForm
             fields={FIELD_CONFIG[tab]}
             values={formValues}
             onChange={(name, value) => setFormValues((v) => ({ ...v, [name]: value }))}
             onSubmit={handleFormSubmit}
-            onCancel={tab === "settings" ? undefined : closeForm}
-            submitLabel={tab === "settings" ? "Save settings" : editingId ? "Save changes" : "Create"}
+            onCancel={closeForm}
+            submitLabel={editingId ? "Save changes" : "Create"}
           />
         </>
       )}
 
       {loading ? (
         <p className="text-textDim text-sm">Loading…</p>
-      ) : isListTab ? (
+      ) : (
         <div className="flex flex-col gap-3">
           {items.length === 0 && <p className="text-textDim text-sm">Nothing here yet.</p>}
           {items.map((item) => (
@@ -243,7 +218,7 @@ export default function AdminDashboard() {
             </div>
           ))}
         </div>
-      ) : null}
+      )}
     </main>
   );
 }

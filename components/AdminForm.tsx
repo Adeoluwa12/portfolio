@@ -45,15 +45,12 @@ function UploadField({
 
   return (
     <div className="flex flex-col gap-2">
-      {value && field.type === "image" && (
+      {value && (
         <img src={value} alt="" className="w-24 h-24 object-cover rounded-md border border-hairline" />
-      )}
-      {value && field.type === "video" && (
-        <video src={value} controls className="w-full max-w-xs rounded-md border border-hairline" />
       )}
       <input
         type="file"
-        accept={field.type === "image" ? "image/*" : "video/*"}
+        accept="image/*"
         onChange={handleFile}
         disabled={uploading}
         className="focus-ring text-text text-xs file:mr-3 file:px-3 file:py-1.5 file:rounded-md file:border file:border-hairline file:bg-surface file:text-text file:text-xs"
@@ -132,7 +129,7 @@ export default function AdminForm({
             />
           )}
 
-          {(field.type === "image" || field.type === "video") && (
+          {field.type === "image" && (
             <UploadField
               field={field}
               value={values[field.name]}
