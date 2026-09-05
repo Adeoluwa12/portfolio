@@ -137,6 +137,16 @@ export default function AdminForm({
             />
           )}
 
+          {field.type === "metrics" && (
+            <textarea
+              value={values[field.name] ?? ""}
+              onChange={(e) => onChange(field.name, e.target.value)}
+              rows={3}
+              placeholder="e.g. Uptime: 99.9%&#10;Pipelines secured: 12&#10;CVEs caught: 47"
+              className="focus-ring bg-surface border border-hairline rounded-md px-3 py-2 text-text text-sm resize-none font-mono"
+            />
+          )}
+
           {(field.type === "text" ||
             field.type === "number" ||
             field.type === "date" ||

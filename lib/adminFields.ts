@@ -1,7 +1,7 @@
 export type FieldConfig = {
   name: string;
   label: string;
-  type: "text" | "textarea" | "number" | "date" | "checkbox" | "select" | "tags" | "image";
+  type: "text" | "textarea" | "number" | "date" | "checkbox" | "select" | "tags" | "image" | "video" | "metrics";
   options?: string[]; // for select
 };
 
@@ -10,6 +10,8 @@ export const FIELD_CONFIG: Record<string, FieldConfig[]> = {
     { name: "title", label: "Title", type: "text" },
     { name: "summary", label: "Summary", type: "textarea" },
     { name: "description", label: "Full description", type: "textarea" },
+    { name: "breakdown", label: "Breakdown (one point per line)", type: "textarea" },
+    { name: "metrics", label: "Metrics (label:value, one per line)", type: "metrics" },
     { name: "stack", label: "Stack (comma separated)", type: "tags" },
     { name: "liveUrl", label: "Live URL", type: "text" },
     { name: "repoUrl", label: "Repo URL", type: "text" },

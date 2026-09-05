@@ -25,9 +25,103 @@ const FALLBACK_PROJECTS = [
   },
 ];
 
-function ProjectCard({ project, index }: { project: any; index: number }) {
+function ProjectModal({ project, onClose }: { project: any; onClose: () => void }) {
   return (
-    <article className="card p-6 sm:p-8 hover:border-accent/30 group">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="relative bg-surface border border-hairline rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-7 sm:p-9"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* close */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 font-mono text-xs text-textDim hover:text-text transition-colors"
+          aria-label="Close"
+        >
+          ✕
+        </button>
+
+        {/* image */}
+        {project.imageUrl && (
+          <img
+            src={project.imageUrl}
+            alt={project.title}
+            className="w-full h-48 object-cover rounded-xl mb-6 border border-hairline"
+          />
+        )}
+
+        <h3 className="font-display text-2xl font-semibold text-text mb-2">{project.title}</h3>
+        <p className="text-textDim text-sm leading-relaxed mb-5">{project.summary}</p>
+
+        {/* full description */}
+        {project.description && (
+          <p className="text-text text-sm leading-relaxed mb-5 whitespace-pre-line">
+            {project.description}
+          </p>
+        )}
+
+        {/* breakdown */}
+        {project.breakdown && (
+          <div className="mb-5">
+            <p className="font-mono text-xs text-accent uppercase tracking-widest mb-2">Breakdown</p>
+            <p className="text-textDim text-sm leading-relaxed whitespace-pre-line">{project.breakdown}</p>
+          </div>
+        )}
+
+        {/* metrics */}
+        {project.metrics?.length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
+            {project.metrics.map((m: any) => (
+              <div key={m.label} className="card px-3 py-3 text-center">
+                <div className="font-display text-lg font-semibold text-accent">{m.value}</div>
+                <div className="text-textDim text-xs mt-0.5">{m.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* stack */}
+        <ul className="flex flex-wrap gap-2 mb-6">
+          {(project.stack || []).map((tech: string) => (
+            <li
+              key={tech}
+              className="font-mono text-xs px-2.5 py-1 rounded-md bg-surfaceAlt border border-hairline text-textDim"
+            >
+              {tech}
+            </li>
+          ))}
+        </ul>
+
+        {/* links */}
+        <div className="flex gap-4 font-mono text-xs">
+          {project.repoUrl && (
+            <a href={project.repoUrl} className="text-accent hover:underline" target="_blank" rel="noopener noreferrer">
+              Repository →
+            </a>
+          )}
+          {project.liveUrl && (
+            <a href={project.liveUrl} className="text-accent hover:underline" target="_blank" rel="noopener noreferrer">
+              Live demo →
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProjectCard({ project, index, onClick }: { project: any; index: number; onClick: () => void }) {
+  return (
+    <article
+      className="card p-6 sm:p-8 hover:border-accent/30 group cursor-pointer"
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === "Enter" && onClick()}
+    >
       <div className="flex items-start gap-5">
         <span className="font-mono text-accent/40 text-2xl font-medium leading-none pt-0.5 shrink-0">
           {String(index + 1).padStart(2, "0")}
@@ -37,28 +131,9 @@ function ProjectCard({ project, index }: { project: any; index: number }) {
             <h3 className="font-display text-xl font-semibold text-text group-hover:text-accent transition-colors">
               {project.title}
             </h3>
-            <div className="flex gap-4 font-mono text-xs">
-              {project.repoUrl && (
-                <a
-                  href={project.repoUrl}
-                  className="text-accent hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Repository →
-                </a>
-              )}
-              {project.liveUrl && (
-                <a
-                  href={project.liveUrl}
-                  className="text-accent hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Live demo →
-                </a>
-              )}
-            </div>
+            <span className="font-mono text-xs text-textDim group-hover:text-accent transition-colors">
+              View details →
+            </span>
           </div>
           <p className="text-textDim text-sm leading-relaxed mb-5">{project.summary}</p>
           <ul className="flex flex-wrap gap-2">
@@ -80,6 +155,7 @@ function ProjectCard({ project, index }: { project: any; index: number }) {
 export default function AccessLogProjects({ projects }: { projects?: any[] }) {
   const data = projects?.length ? projects : FALLBACK_PROJECTS;
   const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT);
+  const [selected, setSelected] = useState<any | null>(null);
 
   const visibleProjects = data.slice(0, visibleCount);
   const hasMore = visibleCount < data.length;
@@ -98,6 +174,7 @@ export default function AccessLogProjects({ projects }: { projects?: any[] }) {
               key={project._id || project.title}
               project={project}
               index={index}
+              onClick={() => setSelected(project)}
             />
           ))}
         </div>
@@ -114,6 +191,8 @@ export default function AccessLogProjects({ projects }: { projects?: any[] }) {
           </div>
         )}
       </div>
+
+      {selected && <ProjectModal project={selected} onClose={() => setSelected(null)} />}
     </section>
   );
 }
