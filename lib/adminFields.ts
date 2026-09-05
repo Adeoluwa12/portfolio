@@ -76,18 +76,7 @@ export function toPayload(tab: string, values: Record<string, any>) {
       .map((s: string) => s.trim())
       .filter(Boolean);
   }
-  // Convert "label:value" lines into [{label, value}] objects for the metrics field
-  if (tab === "projects" && typeof payload.metrics === "string") {
-    payload.metrics = payload.metrics
-      .split("\n")
-      .map((line: string) => line.trim())
-      .filter(Boolean)
-      .map((line: string) => {
-        const idx = line.indexOf(":");
-        if (idx === -1) return { label: line, value: "" };
-        return { label: line.slice(0, idx).trim(), value: line.slice(idx + 1).trim() };
-      });
-  }
+  // metrics is stored as a plain string in the DB — send it as-is
   if (payload.order !== undefined) payload.order = Number(payload.order) || 0;
   if (payload.proficiency !== undefined) payload.proficiency = Number(payload.proficiency) || 1;
   return payload;

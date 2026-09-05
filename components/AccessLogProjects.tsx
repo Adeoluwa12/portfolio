@@ -71,17 +71,34 @@ function ProjectModal({ project, onClose }: { project: any; onClose: () => void 
           </div>
         )}
 
-        {/* metrics */}
-        {project.metrics?.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
-            {project.metrics.map((m: any) => (
-              <div key={m.label} className="card px-3 py-3 text-center">
-                <div className="font-display text-lg font-semibold text-accent">{m.value}</div>
-                <div className="text-textDim text-xs mt-0.5">{m.label}</div>
-              </div>
-            ))}
-          </div>
-        )}
+        {/* metrics — stored as a plain string ("label:value" lines) */}
+        {(() => {
+          const raw = project.metrics;
+          const parsed: { label: string; value: string }[] = Array.isArray(raw)
+            ? raw
+            : typeof raw === "string"
+            ? raw
+                .split("\n")
+                .map((l: string) => l.trim())
+                .filter(Boolean)
+                .map((l: string) => {
+                  const idx = l.indexOf(":");
+                  return idx === -1
+                    ? { label: l, value: "" }
+                    : { label: l.slice(0, idx).trim(), value: l.slice(idx + 1).trim() };
+                })
+            : [];
+          return parsed.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
+              {parsed.map((m) => (
+                <div key={m.label} className="card px-3 py-3 text-center">
+                  <div className="font-display text-lg font-semibold text-accent">{m.value}</div>
+                  <div className="text-textDim text-xs mt-0.5">{m.label}</div>
+                </div>
+              ))}
+            </div>
+          ) : null;
+        })()}
 
         {/* stack */}
         <ul className="flex flex-wrap gap-2 mb-6">
