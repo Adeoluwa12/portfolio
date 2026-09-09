@@ -6,6 +6,9 @@ import MarkdownBody from "@/components/MarkdownBody";
 
 type Props = { params: { slug: string } };
 
+// Allow slugs not known at build time to be rendered on-demand
+export const dynamicParams = true;
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const post = await getBlogPost(params.slug);
