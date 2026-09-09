@@ -39,6 +39,29 @@ export const FIELD_CONFIG: Record<string, FieldConfig[]> = {
     { name: "proficiency", label: "Proficiency (1-5)", type: "number" },
     { name: "order", label: "Display order", type: "number" },
   ],
+  blog: [
+    { name: "title", label: "Title", type: "text" },
+    { name: "slug", label: "Slug (e.g. my-post-title)", type: "text" },
+    { name: "description", label: "Short description / excerpt", type: "textarea" },
+    { name: "body", label: "Body (markdown supported)", type: "textarea" },
+    { name: "imageUrl", label: "Cover image", type: "image" },
+    { name: "tags", label: "Tags (comma separated)", type: "tags" },
+    { name: "published", label: "Published", type: "checkbox" },
+    { name: "publishedAt", label: "Publish date", type: "date" },
+    { name: "order", label: "Display order", type: "number" },
+  ],
+  opensource: [
+    { name: "title", label: "Title", type: "text" },
+    { name: "summary", label: "Summary", type: "textarea" },
+    { name: "description", label: "Full description", type: "textarea" },
+    { name: "stack", label: "Stack (comma separated)", type: "tags" },
+    { name: "repoUrl", label: "Repo URL", type: "text" },
+    { name: "liveUrl", label: "Live URL", type: "text" },
+    { name: "imageUrl", label: "Screenshot", type: "image" },
+    { name: "stars", label: "Stars (display only)", type: "number" },
+    { name: "featured", label: "Featured", type: "checkbox" },
+    { name: "order", label: "Display order", type: "number" },
+  ],
 };
 
 export const EMPTY_VALUES: Record<string, any> = {
@@ -65,6 +88,29 @@ export const EMPTY_VALUES: Record<string, any> = {
     order: 0,
   },
   skills: { name: "", category: "cloud", proficiency: 4, order: 0 },
+  blog: {
+    title: "",
+    slug: "",
+    description: "",
+    body: "",
+    imageUrl: "",
+    tags: "",
+    published: false,
+    publishedAt: "",
+    order: 0,
+  },
+  opensource: {
+    title: "",
+    summary: "",
+    description: "",
+    stack: "",
+    repoUrl: "",
+    liveUrl: "",
+    imageUrl: "",
+    stars: 0,
+    featured: false,
+    order: 0,
+  },
 };
 
 // Convert form state to the shape the API expects (e.g. split comma tags into an array).
@@ -72,6 +118,20 @@ export function toPayload(tab: string, values: Record<string, any>) {
   const payload = { ...values };
   if (tab === "projects" && typeof payload.stack === "string") {
     payload.stack = payload.stack
+      .split(",")
+      .map((s: string) => s.trim())
+      .filter(Boolean);
+  }
+  // opensource stack: same comma-separated → array treatment
+  if (tab === "opensource" && typeof payload.stack === "string") {
+    payload.stack = payload.stack
+      .split(",")
+      .map((s: string) => s.trim())
+      .filter(Boolean);
+  }
+  // blog tags: comma-separated string → array
+  if (tab === "blog" && typeof payload.tags === "string") {
+    payload.tags = payload.tags
       .split(",")
       .map((s: string) => s.trim())
       .filter(Boolean);
@@ -88,6 +148,13 @@ export function toFormValues(tab: string, item: any) {
   if (tab === "projects" && Array.isArray(item.stack)) {
     values.stack = item.stack.join(", ");
   }
+  if (tab === "opensource" && Array.isArray(item.stack)) {
+    values.stack = item.stack.join(", ");
+  }
+  // Convert blog tags array back to comma-separated string
+  if (tab === "blog" && Array.isArray(item.tags)) {
+    values.tags = item.tags.join(", ");
+  }
   // Convert [{label, value}] back into "label:value" lines for the textarea
   if (tab === "projects") {
     values.metrics = Array.isArray(item.metrics)
@@ -96,6 +163,9 @@ export function toFormValues(tab: string, item: any) {
   }
   if (tab === "certifications" && item.issuedDate) {
     values.issuedDate = String(item.issuedDate).slice(0, 10);
+  }
+  if (tab === "blog" && item.publishedAt) {
+    values.publishedAt = String(item.publishedAt).slice(0, 10);
   }
   return values;
 }

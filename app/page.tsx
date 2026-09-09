@@ -3,13 +3,14 @@ import ScopesSkills from "@/components/ScopesSkills";
 import CredentialsVault from "@/components/CredentialsVault";
 import AccessLogProjects from "@/components/AccessLogProjects";
 import ContactForm from "@/components/ContactForm";
-import { getCertifications, getProjects, getSkills } from "@/lib/api";
+import { getCertifications, getProjects, getSkills, getOpenSourceProjects } from "@/lib/api";
 
 export default async function Home() {
-  const [skills, certifications, projects] = await Promise.allSettled([
+  const [skills, certifications, projects, openSource] = await Promise.allSettled([
     getSkills(),
     getCertifications(),
     getProjects(),
+    getOpenSourceProjects(),
   ]).then((results) => results.map((r) => (r.status === "fulfilled" ? r.value : null)));
 
   return (
@@ -17,7 +18,7 @@ export default async function Home() {
       <AccessBadgeHero />
       <ScopesSkills skills={skills} />
       <CredentialsVault certifications={certifications} />
-      <AccessLogProjects projects={projects} />
+      <AccessLogProjects projects={projects} openSource={openSource} />
       <ContactForm />
       <footer className="text-center py-10 text-textDim text-xs font-mono">
         oluferanmi-sec.me · Lagos, Nigeria

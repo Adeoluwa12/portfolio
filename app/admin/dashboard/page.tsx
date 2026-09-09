@@ -6,7 +6,7 @@ import AdminForm from "@/components/AdminForm";
 import { FIELD_CONFIG, EMPTY_VALUES, toPayload, toFormValues } from "@/lib/adminFields";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-const TABS = ["projects", "certifications", "skills", "messages"] as const;
+const TABS = ["projects", "certifications", "skills", "blog", "opensource", "messages"] as const;
 type Tab = (typeof TABS)[number];
 
 export default function AdminDashboard() {
@@ -187,7 +187,12 @@ export default function AdminDashboard() {
                 ) : (
                   <>
                     <p className="font-medium">{item.title || item.name}</p>
-                    <p className="text-textDim text-xs">{item.summary || item.code}</p>
+                    <p className="text-textDim text-xs">{item.summary || item.description || item.code}</p>
+                    {tab === "blog" && (
+                      <p className="text-textDim text-xs font-mono mt-0.5">
+                        /{item.slug} · {item.published ? "published" : "draft"}
+                      </p>
+                    )}
                   </>
                 )}
               </div>

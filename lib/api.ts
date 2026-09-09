@@ -1,7 +1,7 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 async function get(path: string) {
-  const res = await fetch(`${API_URL}/api${path}`, { next: { revalidate: 60 } });
+  const res = await fetch(`${API_URL}/api${path}`, { cache: "no-store" });
   if (!res.ok) throw new Error(`Failed to fetch ${path}`);
   return res.json();
 }
@@ -9,6 +9,9 @@ async function get(path: string) {
 export const getProjects = () => get("/projects");
 export const getCertifications = () => get("/certifications");
 export const getSkills = () => get("/skills");
+export const getBlogPosts = () => get("/blog");
+export const getBlogPost = (slug: string) => get(`/blog/${slug}`);
+export const getOpenSourceProjects = () => get("/opensource");
 
 export async function submitContact(payload: {
   name: string;
