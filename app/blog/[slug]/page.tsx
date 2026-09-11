@@ -8,6 +8,8 @@ type Props = { params: { slug: string } };
 
 // Allow slugs not known at build time to be rendered on-demand
 export const dynamicParams = true;
+// Always SSR — never serve a stale static snapshot
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {

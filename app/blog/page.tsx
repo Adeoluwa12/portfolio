@@ -2,6 +2,8 @@ import { getBlogPosts } from "@/lib/api";
 import Link from "next/link";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Blog | Oluwaferanmi David Adeoye",
   description: "Thoughts on cloud security, Azure, Zero Trust, and DevSecOps.",

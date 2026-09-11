@@ -5,6 +5,10 @@ import AccessLogProjects from "@/components/AccessLogProjects";
 import ContactForm from "@/components/ContactForm";
 import { getCertifications, getProjects, getSkills, getOpenSourceProjects } from "@/lib/api";
 
+// Force SSR on every request — prevents Next.js from statically generating
+// this page at build time and serving stale HTML after content updates.
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const [skills, certifications, projects, openSource] = await Promise.allSettled([
     getSkills(),
