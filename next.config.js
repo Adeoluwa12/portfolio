@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Run as a standalone Node.js server on Render — disables static/edge
+  // pre-rendering entirely so every request hits the server fresh.
+  output: "standalone",
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "res.cloudinary.com", pathname: "/**" },
